@@ -3,7 +3,7 @@ module litequeue
 import time
 import db.sqlite
 
-enum MessageStatus as u8 {
+pub enum MessageStatus as u8 {
 	ready
 	locked
 	done
@@ -67,7 +67,7 @@ pub fn new(config Queue_config) !Queue {
 					queue.mark_done(message.message_id)
 					println('[queue][done][${message.message_id}]')
 				} else {
-					println('[queue][pooling]')
+					// println('[queue][pooling]')
 					time.sleep(config.pooling_interval)
 				}
 			}
@@ -100,7 +100,7 @@ pub fn (mut self Queue) add(data string) !Message {
 }
 
 // Method pop_transaction
-fn (mut self Queue) take() ?Message {
+pub fn (mut self Queue) take() ?Message {
 	now := time.now()
 
 	messages := sql self.conn {
@@ -121,7 +121,7 @@ fn (mut self Queue) take() ?Message {
 }
 
 // Return all the tasks in gived state.
-fn (mut self Queue) list_of(status MessageStatus) []Message {
+pub fn (mut self Queue) list_of(status MessageStatus) []Message {
 	list_failed := sql self.conn {
 		select from Message where status == status
 	} or { panic(err) }
@@ -129,7 +129,7 @@ fn (mut self Queue) list_of(status MessageStatus) []Message {
 }
 
 // Mark a locked message as free again.
-fn (mut self Queue) mark_fail(message_id int) {
+pub fn (mut self Queue) mark_fail(message_id int) {
 	sql self.conn {
 		update Message set status = MessageStatus.failed where message_id == message_id
 		update Message set done_time = none where message_id == message_id
@@ -137,7 +137,7 @@ fn (mut self Queue) mark_fail(message_id int) {
 }
 
 // Method pop_transaction
-fn (mut self Queue) mark_done(message_id int) {
+pub fn (mut self Queue) mark_done(message_id int) {
 	now := time.now()
 
 	sql self.conn {
@@ -147,18 +147,18 @@ fn (mut self Queue) mark_done(message_id int) {
 }
 
 // Mark a locked message as free again.
-fn (mut self Queue) len() int {
+pub fn (mut self Queue) len() int {
 	count := sql self.conn {
 		select count from Message
 	} or { panic(err) }
 	return count
 }
 
-fn (mut self Queue) next() ?Message {
+pub fn (mut self Queue) next() ?Message {
 	return self.take()
 }
 
 // Return all the tasks in gived state.
-fn (mut self Queue) close()! {
+pub fn (mut self Queue) close()! {
 	self.conn.close()!
 }
