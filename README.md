@@ -3,7 +3,7 @@ v install koplenov.litequeue
 
 ## usage
 
-### simple usage in queue_test.v file
+### simple usage in [queue_test.v](https://github.com/koplenov/litequeue/blob/master/queue_test.v) file
 
 ### veb usage:
 
