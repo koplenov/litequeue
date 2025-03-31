@@ -12,7 +12,7 @@ pub enum MessageStatus as u8 {
 
 // Struct Message
 pub struct Message {
-mut pub:
+pub mut:
 	data       string
 	message_id int @[primary; sql: serial]
 	status     MessageStatus
